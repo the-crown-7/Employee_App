@@ -4,12 +4,19 @@ import jwt from "jsonwebtoken";
 
 export const loginEmployee = async (req, res) => {
   try {
-    const { employeeId, password } = req.body;
+    const employee_id = req.body.employee_id;
+    const password = req.body.password;
 
-    // 1. Check employee exists
+    if (!employee_id || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "employee_id and password are required",
+      });
+    }
+
     const [users] = await db.execute(
       "SELECT * FROM employees WHERE employee_id = ?",
-      [employeeId]
+      [employee_id]
     );
 
     if (users.length === 0) {
@@ -21,7 +28,6 @@ export const loginEmployee = async (req, res) => {
 
     const user = users[0];
 
-    // 2. Check password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -31,27 +37,20 @@ export const loginEmployee = async (req, res) => {
       });
     }
 
-    // 3. Create JWT token (12 hours)
     const token = jwt.sign(
       {
-        id: user.id,
-        employeeId: user.employeeId,
+        employee_id: user.employee_id,
+        email: user.email
       },
       process.env.JWT_SECRET,
-      { expiresIn: "12h" }
+      { expiresIn: "7d" }
     );
 
-    // 4. Response
     return res.status(200).json({
       success: true,
       message: "Login successful",
       token,
-      employee: {
-        id: user.id,
-        name: user.name,
-        employeeId: user.employeeId,
-        email: user.email,
-      },
+
     });
   } catch (error) {
     return res.status(500).json({
