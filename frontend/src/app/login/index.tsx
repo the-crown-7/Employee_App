@@ -1,21 +1,42 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { loginStyles } from './login.styles';
+import { loginUser } from '../../services/loginServices';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+
+  // 🔴 use employeeId instead of email
+  const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // TODO: hook this up to your real auth logic
-    console.log('Login pressed:', email, password);
-    router.replace('/home');
+  const handleLogin = async () => {
+    if (!employeeId || !password) {
+      Alert.alert("Error", "All fields are required");
+      return;
+    }
+
+    try {
+      const result = await loginUser({
+        employee_id: employeeId,
+        password,
+      });
+
+
+      if (result.success) {
+        Alert.alert("Success", "Login successful");
+        router.replace('/home');
+      } else {
+        Alert.alert("Error", result.message);
+      }
+
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong");
+    }
   };
 
-
-   return (
+  return (
     <View style={loginStyles.container}>
       <View style={loginStyles.logoCircle}>
         <Image
@@ -26,14 +47,14 @@ export default function LoginScreen() {
       </View>
 
       <Text style={loginStyles.title}>Login</Text>
+
+      {/* 🔴 Employee ID input */}
       <TextInput
         style={loginStyles.input}
-        placeholder="Email"
+        placeholder="Employee ID"
         placeholderTextColor="#999"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
+        value={employeeId}
+        onChangeText={setEmployeeId}
       />
 
       <TextInput
@@ -50,7 +71,9 @@ export default function LoginScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.push('/register')}>
-        <Text style={loginStyles.registerText}>Don't have an account? Register</Text>
+        <Text style={loginStyles.registerText}>
+          Don't have an account? Register
+        </Text>
       </TouchableOpacity>
     </View>
   );
