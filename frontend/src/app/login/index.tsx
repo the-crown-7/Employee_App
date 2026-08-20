@@ -1,22 +1,72 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { loginStyles } from './login.styles';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+ const [employeeId, setEmployeeId] = useState('');
+ const [password, setPassword] = useState('');
+ const [error, setError] = useState('');
 
   const handleLogin = () => {
-    // TODO: hook this up to your real auth logic
-    console.log('Login pressed:', email, password);
-    router.replace('/home');
-  };
+  const trimmedEmployeeId = employeeId.trim();
+
+  // Employee ID format
+  const employeeIdRegex = /^EMP[0-9]{3,}$/i;
+
+  if (!employeeIdRegex.test(trimmedEmployeeId)) {
+    setError('Please enter a valid employee ID');
+    return;
+  }
+
+  // Strong password format
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[@$!%*?&]/.test(password);
+  const hasMinLength = password.length >= 8;
+
+  if (
+    !hasMinLength ||
+    !hasUppercase ||
+    !hasLowercase ||
+    !hasNumber ||
+    !hasSpecial
+  ) {
+    setError('Please enter a valid strong password');
+    return;
+  }
+
+  // Basic validation passed
+  setError('');
+
+  console.log('Employee ID:', trimmedEmployeeId);
+  console.log('Password:', password);
+
+  router.replace('/home');
+};
 
 
    return (
-    <View style={loginStyles.container}>
+  <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  >
+    <ScrollView
+      contentContainerStyle={loginStyles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={loginStyles.container}>
       <View style={loginStyles.logoCircle}>
         <Image
           source={require('../../../assets/images/logo.png')}
@@ -24,17 +74,19 @@ export default function LoginScreen() {
           resizeMode="contain"
         />
       </View>
-
+      
       <Text style={loginStyles.title}>Login</Text>
+      {error ? (
+  <Text style={loginStyles.errorText}>{error}</Text>
+) : null}
       <TextInput
-        style={loginStyles.input}
-        placeholder="Email"
-        placeholderTextColor="#999"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
+  style={loginStyles.input}
+  placeholder="Employee ID"
+  placeholderTextColor="#999"
+  autoCapitalize="characters"
+  value={employeeId}
+  onChangeText={setEmployeeId}
+/>
 
       <TextInput
         style={loginStyles.input}
@@ -53,5 +105,7 @@ export default function LoginScreen() {
         <Text style={loginStyles.registerText}>Don't have an account? Register</Text>
       </TouchableOpacity>
     </View>
-  );
+    </ScrollView>
+  </KeyboardAvoidingView>
+);
 }

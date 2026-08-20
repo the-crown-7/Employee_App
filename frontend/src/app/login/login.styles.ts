@@ -61,4 +61,16 @@ logoImage: {
   width: '100%',
   height: '100%',
 },
+scrollContainer: {
+  flexGrow: 1,
+  justifyContent: 'center',
+  paddingVertical: 30,
+  backgroundColor:'#ffffff',
+},
+errorText: {
+  color: 'red',
+  fontSize: 14,
+  marginBottom: 10,
+  textAlign: 'center',
+},
 });

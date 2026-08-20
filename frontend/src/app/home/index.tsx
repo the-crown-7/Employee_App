@@ -1,5 +1,8 @@
-import { Image, Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image, Linking, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { homeStyles } from './home.styles';
+import { FontAwesome } from '@expo/vector-icons';
 
 type Product = {
   id: string;
@@ -19,7 +22,15 @@ const products: Product[] = [
   { id: '7', name: 'Product Seven', description: 'Short product description goes here', mrp: '₹1,899', discount: '18% OFF' },
 ];
 
+const employee = {
+  id: 'EMP1024',
+  name: 'John Doe',
+  email: 'john.doe@example.com',
+};
+
 export default function HomeScreen() {
+  const [showProfile, setShowProfile] = useState(false);
+
   const handleSell = (productId: string) => {
     // TODO: hook this up to your real sell/product flow
     console.log('Sell pressed for product:', productId);
@@ -30,8 +41,8 @@ export default function HomeScreen() {
     console.log('Open Account pressed');
   };
 
-  return (
-    <View style={homeStyles.screen}>
+ return (
+  <SafeAreaView style={homeStyles.screen} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={homeStyles.header}>
         <Image
@@ -45,12 +56,40 @@ export default function HomeScreen() {
           <Text style={homeStyles.headerSubtitle}>Your trusted marketplace</Text>
         </View>
 
-        <Image
-          source={require('../../../assets/images/logo.png')}
-          style={homeStyles.headerAvatar}
-          resizeMode="cover"
-        />
+        <TouchableOpacity onPress={() => setShowProfile(!showProfile)}>
+          <Image
+            source={require('../../../assets/images/logo.png')}
+            style={homeStyles.headerAvatar}
+            resizeMode="cover"
+          />
+        </TouchableOpacity>
       </View>
+
+      {/* Profile dropdown - only shows when avatar is tapped */}
+      {showProfile && (
+        <>
+          <Pressable style={homeStyles.overlay} onPress={() => setShowProfile(false)} />
+
+          <View style={homeStyles.profileDropdown}>
+            <View style={homeStyles.profileAvatarCircle}>
+              <Image
+                source={require('../../../assets/images/logo.png')}
+                style={homeStyles.profileAvatarImage}
+                resizeMode="cover"
+              />
+            </View>
+
+            <Text style={homeStyles.profileLabel}>Employee ID</Text>
+            <Text style={homeStyles.profileValue}>{employee.id}</Text>
+
+            <Text style={homeStyles.profileLabel}>Name</Text>
+            <Text style={homeStyles.profileValue}>{employee.name}</Text>
+
+            <Text style={homeStyles.profileLabel}>Email</Text>
+            <Text style={homeStyles.profileValue}>{employee.email}</Text>
+          </View>
+        </>
+      )}
 
       {/* Main content */}
       <ScrollView
@@ -94,25 +133,26 @@ export default function HomeScreen() {
           <Text style={homeStyles.footerContact}>+91 98765 43210</Text>
 
           <View style={homeStyles.socialRow}>
-            <TouchableOpacity onPress={() => Linking.openURL('https://facebook.com')}>
-              <Text style={homeStyles.socialIcon}>📘</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => Linking.openURL('https://wa.me/')}>
-              <Text style={homeStyles.socialIcon}>💬</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => Linking.openURL('https://instagram.com')}>
-              <Text style={homeStyles.socialIcon}>📷</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => Linking.openURL('https://twitter.com')}>
-              <Text style={homeStyles.socialIcon}>🐦</Text>
-            </TouchableOpacity>
-          </View>
+  <TouchableOpacity onPress={() => Linking.openURL('https://www.facebook.com/profile.php?id=61593189241605')}>
+    <FontAwesome name="facebook" size={24} color="#1877F2" />
+  </TouchableOpacity>
 
-          <TouchableOpacity style={homeStyles.openAccountButton} onPress={handleOpenAccount}>
-            <Text style={homeStyles.openAccountButtonText}>Open Account</Text>
-          </TouchableOpacity>
+  <TouchableOpacity onPress={() => Linking.openURL('https://wa.me/919147367703')}>
+    <FontAwesome name="whatsapp" size={24} color="#25D366" />
+  </TouchableOpacity>
+
+  <TouchableOpacity
+  onPress={() => Linking.openURL('https://www.instagram.com/tcc536')}
+>
+  <FontAwesome name="instagram" size={24} color="#E4405F" />
+</TouchableOpacity>
+
+  <TouchableOpacity onPress={() => Linking.openURL('https://x.com/consultanc19555')}>
+    <FontAwesome name="twitter" size={24} color="#1DA1F2" />
+  </TouchableOpacity>
+</View>
         </View>
       </ScrollView>
-    </View>
-  );
+   </SafeAreaView>
+);
 }
