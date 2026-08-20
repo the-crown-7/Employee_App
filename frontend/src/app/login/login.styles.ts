@@ -1,0 +1,64 @@
+import { StyleSheet } from 'react-native';
+
+export const loginStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 32,
+    textAlign: 'center',
+    color: '#222',
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    marginBottom: 16,
+    fontSize: 16,
+    color: '#000',
+  },
+  button: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#4a90e2',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  registerText: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: '#4a90e2',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  logoCircle: {
+  width: 100,
+  height: 100,
+  borderRadius: 50,
+  backgroundColor: '#f2f2f2',
+  justifyContent: 'center',
+  alignItems: 'center',
+  overflow: 'hidden',
+  alignSelf: 'center',
+  marginBottom: 24,
+},
+logoImage: {
+  width: '100%',
+  height: '100%',
+},
+});

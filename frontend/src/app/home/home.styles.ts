@@ -1,0 +1,152 @@
+import { StyleSheet } from 'react-native';
+
+export const homeStyles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#f7f7f7',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  headerLogo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#222',
+  },
+  headerSubtitle: {
+    fontSize: 11,
+    color: '#888',
+    marginTop: 2,
+  },
+  headerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#ddd',
+  },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 32,
+  },
+  card: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  productImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: '#f0f0f0',
+    marginRight: 14,
+  },
+  cardInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  productName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#222',
+  },
+  productDescription: {
+    fontSize: 12,
+    color: '#777',
+    marginTop: 2,
+    marginBottom: 6,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  productMrp: {
+    fontSize: 13,
+    color: '#999',
+    textDecorationLine: 'line-through',
+    marginRight: 8,
+  },
+  productDiscount: {
+    fontSize: 13,
+    color: '#2e8b57',
+    fontWeight: '600',
+  },
+  sellButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#4a90e2',
+    paddingHorizontal: 18,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  sellButtonText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  footer: {
+    marginTop: 12,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    backgroundColor: '#222',
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  footerAddress: {
+    color: '#ccc',
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  footerContact: {
+    color: '#ccc',
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  socialRow: {
+    flexDirection: 'row',
+    marginTop: 12,
+    marginBottom: 20,
+  },
+  socialIcon: {
+    fontSize: 22,
+    marginHorizontal: 10,
+  },
+  openAccountButton: {
+    backgroundColor: '#4a90e2',
+    paddingHorizontal: 32,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  openAccountButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+});
