@@ -1,6 +1,6 @@
 import db from "../config/db.js";
 
-//  Add Product
+ //Add Product
 export const addProduct = async (req, res) => {
   try {
     const { name, description, mrp, discount } = req.body;
