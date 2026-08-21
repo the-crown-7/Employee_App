@@ -10,10 +10,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Image, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { registerStyles } from './register.styles';
+import { registerUser } from '../../services/registerServices'; // ✅ import API
 
 export default function RegisterScreen() {
   const router = useRouter();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +25,38 @@ export default function RegisterScreen() {
  const handleRegister = () => {
   const trimmedName = name.trim();
   const trimmedEmail = email.trim();
+  const handleRegister = async () => {
+    // ✅ validation
+    if (!name || !email || !password) {
+      Alert.alert("Error", "All fields are required");
+      return;
+    }
+
+    try {
+      const userData = {
+        name,
+        email,
+        password,
+      };
+
+      console.log("Sending:", userData);
+
+      const result = await registerUser(userData);
+
+      console.log("Response:", result);
+
+      if (result.success) {
+        Alert.alert("Success", "Registered successfully");
+        router.replace('/login'); // ✅ go to login after register
+      } else {
+        Alert.alert("Error", result.message);
+      }
+
+    } catch (error) {
+      console.log("Register error:", error);
+      Alert.alert("Error", "Something went wrong");
+    }
+  };
 
  const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)+$/;
 
@@ -76,6 +111,14 @@ if (
             resizeMode="contain"
           />
         </View>
+    <View style={registerStyles.container}>
+      <View style={registerStyles.logoCircle}>
+        <Image
+          source={require('../../../assets/images/logo.png')}
+          style={registerStyles.logoImage}
+          resizeMode="contain"
+        />
+      </View>
 
         {error ? (
   <Text style={registerStyles.errorText}>{error}</Text>
@@ -112,7 +155,9 @@ if (
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.push('/login')}>
-        <Text style={registerStyles.loginText}>Already have an account? Login</Text>
+        <Text style={registerStyles.loginText}>
+          Already have an account? Login
+        </Text>
       </TouchableOpacity>
     </View>
     </ScrollView>

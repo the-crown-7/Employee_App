@@ -10,7 +10,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Image, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { loginStyles } from './login.styles';
+import { loginUser } from '../../services/loginServices';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -56,6 +58,29 @@ export default function LoginScreen() {
   router.replace('/home');
 };
 
+  // 🔴 use employeeId instead of email
+  const [employeeId, setEmployeeId] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    if (!employeeId || !password) {
+      Alert.alert("Error", "All fields are required");
+      return;
+    }
+
+    try {
+      const result = await loginUser({
+        employee_id: employeeId,
+        password,
+      });
+
+
+      if (result.success) {
+        Alert.alert("Success", "Login successful");
+        router.replace('/home');
+      } else {
+        Alert.alert("Error", result.message);
+      }
 
    return (
   <KeyboardAvoidingView
@@ -67,6 +92,13 @@ export default function LoginScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={loginStyles.container}>
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong");
+    }
+  };
+
+  return (
+    <View style={loginStyles.container}>
       <View style={loginStyles.logoCircle}>
         <Image
           source={require('../../../assets/images/logo.png')}
@@ -88,6 +120,15 @@ export default function LoginScreen() {
   onChangeText={setEmployeeId}
 />
 
+      {/* 🔴 Employee ID input */}
+      <TextInput
+        style={loginStyles.input}
+        placeholder="Employee ID"
+        placeholderTextColor="#999"
+        value={employeeId}
+        onChangeText={setEmployeeId}
+      />
+
       <TextInput
         style={loginStyles.input}
         placeholder="Password"
@@ -102,7 +143,9 @@ export default function LoginScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.push('/register')}>
-        <Text style={loginStyles.registerText}>Don't have an account? Register</Text>
+        <Text style={loginStyles.registerText}>
+          Don't have an account? Register
+        </Text>
       </TouchableOpacity>
     </View>
     </ScrollView>

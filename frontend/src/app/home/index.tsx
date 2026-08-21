@@ -21,6 +21,18 @@ const products: Product[] = [
   { id: '6', name: 'Product Six', description: 'Short product description goes here', mrp: '₹1,099', discount: '30% OFF' },
   { id: '7', name: 'Product Seven', description: 'Short product description goes here', mrp: '₹1,899', discount: '18% OFF' },
 ];
+import { useEffect, useState } from 'react';
+import {
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  Linking,
+} from 'react-native';
+import { homeStyles } from './home.styles';
+import { getProducts } from '../../services/productServices';
 
 const employee = {
   id: 'EMP1024',
@@ -35,10 +47,29 @@ export default function HomeScreen() {
     // TODO: hook this up to your real sell/product flow
     console.log('Sell pressed for product:', productId);
   };
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleOpenAccount = () => {
-    // TODO: point this wherever "open account" should go
-    console.log('Open Account pressed');
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+
+      const result = await getProducts();
+
+
+      if (result.success) {
+        setProducts(result.products || result.data || []);
+      } else {
+      }
+
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
  return (
@@ -98,31 +129,39 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {products.map((product) => (
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+        <Text>Loading products...</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={homeStyles.screen}>
+
+      {/* Header */}
+      <View style={homeStyles.header}>
+        <Text style={homeStyles.headerTitle}>TCCKOL</Text>
+      </View>
+
+      {/* Products */}
+      <ScrollView>
+        {products.map((product: any) => (
           <View key={product.id} style={homeStyles.card}>
+
             <Image
-              source={require('../../../assets/images/logo.png')}
+              source={{
+                uri: product.image || 'https://via.placeholder.com/150'
+              }}
               style={homeStyles.productImage}
-              resizeMode="cover"
             />
 
-            <View style={homeStyles.cardInfo}>
-              <Text style={homeStyles.productName}>{product.name}</Text>
-              <Text style={homeStyles.productDescription}>{product.description}</Text>
-
-              <View style={homeStyles.priceRow}>
-                <Text style={homeStyles.productMrp}>{product.mrp}</Text>
-                <Text style={homeStyles.productDiscount}>{product.discount}</Text>
-              </View>
-
-              <TouchableOpacity
-                style={homeStyles.sellButton}
-                onPress={() => handleSell(product.id)}
-              >
-                <Text style={homeStyles.sellButtonText}>Sell</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
+            <Text>{product.name}</Text>
+            <Text>{product.description}</Text>
+            <Text>₹{product.mrp}</Text>
+            <Text>{product.discount}</Text>
 
         {/* Footer */}
         <View style={homeStyles.footer}>
@@ -155,4 +194,15 @@ export default function HomeScreen() {
       </ScrollView>
    </SafeAreaView>
 );
+            <TouchableOpacity
+            >
+              <Text>Sell</Text>
+            </TouchableOpacity>
+
+          </View>
+        ))}
+      </ScrollView>
+
+    </View>
+  );
 }
