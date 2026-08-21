@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Image,
   ScrollView,
@@ -11,20 +11,24 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
+import { useRouter } from 'expo-router';
+
 import { homeStyles } from './home.styles';
 import { getProducts } from '../../services/productServices';
-
-const employee = {
-  id: 'EMP1024',
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-};
+import { fetchProfileAPI } from '../../services/profileServices';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   const [showProfile, setShowProfile] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [employee, setEmployee] = useState<any>(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  // ✅ CORRECT HOOK
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -38,21 +42,41 @@ export default function HomeScreen() {
         setProducts(result.products || result.data || []);
       }
     } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleSell = (productId: string) => {
-    console.log('Sell pressed for product:', productId);
+  };
+
+  // PROFILE FETCH
+  const handleProfileOpen = async () => {
+    setShowProfile(true);
+    setProfileLoading(true);
+
+    const res = await fetchProfileAPI();
+
+
+    if (res.success) {
+      setEmployee(res.profile);
+    }
+
+    setProfileLoading(false);
+  };
+
+  // LOGOUT
+  const handleLogout = async () => {
+    await SecureStore.deleteItemAsync('token');
+    setShowProfile(false);
+    router.replace('/login');
   };
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={homeStyles.loaderContainer}>
         <ActivityIndicator size="large" />
-        <Text>Loading products...</Text>
+        <Text style={{ marginTop: 10 }}>Loading products...</Text>
       </View>
     );
   }
@@ -60,28 +84,30 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={homeStyles.screen} edges={['top', 'bottom']}>
 
-      {/* Header */}
+      {/* HEADER */}
       <View style={homeStyles.header}>
         <Image
           source={require('../../../assets/images/logo.png')}
           style={homeStyles.headerLogo}
-          resizeMode="contain"
         />
 
         <View style={homeStyles.headerCenter}>
           <Text style={homeStyles.headerTitle}>TCCKOL</Text>
-          <Text style={homeStyles.headerSubtitle}>Your trusted marketplace</Text>
+          <Text style={homeStyles.headerSubtitle}>
+            Your Trust , Our Priority
+          </Text>
         </View>
 
-        <TouchableOpacity onPress={() => setShowProfile(!showProfile)}>
+        {/* AVATAR */}
+        <TouchableOpacity onPress={handleProfileOpen}>
           <Image
-            source={require('../../../assets/images/logo.png')}
+            source={require('../../../assets/images/avater.png')}
             style={homeStyles.headerAvatar}
           />
         </TouchableOpacity>
       </View>
 
-      {/* Profile dropdown */}
+      {/* PROFILE DROPDOWN */}
       {showProfile && (
         <>
           <Pressable
@@ -90,15 +116,72 @@ export default function HomeScreen() {
           />
 
           <View style={homeStyles.profileDropdown}>
-            <Text>{employee.id}</Text>
-            <Text>{employee.name}</Text>
-            <Text>{employee.email}</Text>
+
+            {profileLoading ? (
+              <Text style={homeStyles.loadingText}>
+                Loading profile...
+              </Text>
+            ) : employee ? (
+              <>
+                <Image
+                  source={
+                    employee?.avatar
+                      ? { uri: employee.avatar }
+                      : require('../../../assets/images/avater.png')
+                  }
+                  style={homeStyles.profileAvatar}
+                />
+
+                <Text style={homeStyles.profileName}>
+                  {employee.name}
+                </Text>
+
+                <View style={homeStyles.divider} />
+
+                <View style={homeStyles.infoRow}>
+                  <Text style={homeStyles.label}>Employee ID</Text>
+                  <Text style={homeStyles.value}>
+                    {employee.employee_id}
+                  </Text>
+                </View>
+
+                <View style={homeStyles.infoRow}>
+                  <Text style={homeStyles.label}>Email</Text>
+                  <Text style={homeStyles.value}>
+                    {employee.email}
+                  </Text>
+                </View>
+
+                {/* LOGOUT INSIDE DROPDOWN */}
+                <TouchableOpacity
+                  style={{
+                    marginTop: 12,
+                    backgroundColor: '#dc2626',
+                    paddingVertical: 8,
+                    paddingHorizontal: 20,
+                    borderRadius: 8,
+                  }}
+                  onPress={handleLogout}
+                >
+                  <Text style={{ color: '#fff', fontWeight: '700' }}>
+                    Logout
+                  </Text>
+                </TouchableOpacity>
+
+              </>
+            ) : (
+              <Text style={homeStyles.loadingText}>
+                Failed to load profile. Please try again.
+              </Text>
+            )}
+
           </View>
         </>
       )}
 
-      {/* Products */}
-      <ScrollView>
+      {/* PRODUCTS */}
+      <ScrollView contentContainerStyle={homeStyles.contentContainer}>
+
         {products.map((product: any) => (
           <View key={product.id} style={homeStyles.card}>
 
@@ -109,19 +192,37 @@ export default function HomeScreen() {
               style={homeStyles.productImage}
             />
 
-            <Text>{product.name}</Text>
-            <Text>{product.description}</Text>
-            <Text>₹{product.mrp}</Text>
-            <Text>{product.discount}</Text>
+            <View style={homeStyles.cardInfo}>
+              <Text style={homeStyles.productName}>
+                {product.name}
+              </Text>
 
-            <TouchableOpacity onPress={() => handleSell(product.id)}>
-              <Text>Sell</Text>
+              <Text numberOfLines={2} style={homeStyles.productDescription}>
+                {product.description}
+              </Text>
+
+              <View style={homeStyles.priceRow}>
+                <Text style={homeStyles.productMrp}>
+                  ₹{product.mrp}
+                </Text>
+
+                <Text style={homeStyles.productDiscount}>
+                  {product.discount}% OFF
+                </Text>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={homeStyles.sellButton}
+              onPress={() => handleSell(product.id)}
+            >
+              <Text style={homeStyles.sellButtonText}>Sell</Text>
             </TouchableOpacity>
 
           </View>
         ))}
 
-        {/* Footer (moved outside map correctly) */}
+        {/* FOOTER */}
         <View style={homeStyles.footer}>
           <Text style={homeStyles.footerAddress}>
             123 Market Street, Kolkata, West Bengal, India
@@ -138,7 +239,9 @@ export default function HomeScreen() {
               <FontAwesome name="whatsapp" size={24} color="#25D366" />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => Linking.openURL('https://www.instagram.com/tcc536')}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('https://www.instagram.com/tcc536')}
+            >
               <FontAwesome name="instagram" size={24} color="#E4405F" />
             </TouchableOpacity>
 
@@ -149,6 +252,7 @@ export default function HomeScreen() {
         </View>
 
       </ScrollView>
+
     </SafeAreaView>
   );
 }
