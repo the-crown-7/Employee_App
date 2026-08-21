@@ -1,5 +1,15 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Image, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { registerStyles } from './register.styles';
 import { registerUser } from '../../services/registerServices'; // ✅ import API
@@ -10,7 +20,11 @@ export default function RegisterScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
+ const handleRegister = () => {
+  const trimmedName = name.trim();
+  const trimmedEmail = email.trim();
   const handleRegister = async () => {
     // ✅ validation
     if (!name || !email || !password) {
@@ -44,7 +58,59 @@ export default function RegisterScreen() {
     }
   };
 
+ const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)+$/;
+
+if (!nameRegex.test(trimmedName)) {
+  setError('Please enter your full name');
+  return;
+}
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(trimmedEmail)) {
+    setError('Please enter a valid email');
+    return;
+  }
+
+ const hasUppercase = /[A-Z]/.test(password);
+const hasLowercase = /[a-z]/.test(password);
+const hasNumber = /[0-9]/.test(password);
+const hasSpecial = /[@$!%*?&]/.test(password);
+const hasMinLength = password.length >= 8;
+
+if (
+  !hasMinLength ||
+  !hasUppercase ||
+  !hasLowercase ||
+  !hasNumber ||
+  !hasSpecial
+) {
+  setError(
+    'Please enter a strong password: 8+ characters, uppercase, lowercase, number and special character'
+  );
+  return;
+}
+  setError('');
+  console.log('Register pressed:', trimmedName, trimmedEmail, password);
+
+  router.replace('/login');
+};
   return (
+  <KeyboardAvoidingView
+    style={{ flex: 1, backgroundColor: '#ffffff' }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  >
+    <ScrollView
+      contentContainerStyle={registerStyles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={registerStyles.container}>
+        <View style={registerStyles.logoCircle}>
+          <Image
+            source={require('../../../assets/images/logo.png')}
+            style={registerStyles.logoImage}
+            resizeMode="contain"
+          />
+        </View>
     <View style={registerStyles.container}>
       <View style={registerStyles.logoCircle}>
         <Image
@@ -54,6 +120,9 @@ export default function RegisterScreen() {
         />
       </View>
 
+        {error ? (
+  <Text style={registerStyles.errorText}>{error}</Text>
+) : null}
       <TextInput
         style={registerStyles.input}
         placeholder="Name"
@@ -91,5 +160,7 @@ export default function RegisterScreen() {
         </Text>
       </TouchableOpacity>
     </View>
-  );
+    </ScrollView>
+  </KeyboardAvoidingView>
+);
 }
