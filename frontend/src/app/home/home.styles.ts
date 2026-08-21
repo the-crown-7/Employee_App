@@ -188,7 +188,7 @@ export const homeStyles = StyleSheet.create({
     right: 10,
     bottom: 10,
     backgroundColor: '#16a34a',
-    paddingVertical: 7,
+    paddingVertical: 5,
     paddingHorizontal: 18,
     borderRadius: 8,
     elevation: 3,
