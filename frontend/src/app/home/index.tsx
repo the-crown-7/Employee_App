@@ -201,14 +201,31 @@ export default function HomeScreen() {
                 {product.description}
               </Text>
 
-              <View style={homeStyles.priceRow}>
-                <Text style={homeStyles.productMrp}>
-                  ₹{product.mrp}
-                </Text>
+              <View>
+                {Number(product.discount) > 0 ? (
+                  <>
+                    {/* Row 1 → MRP + Discount */}
+                    <View style={homeStyles.priceRow}>
+                      <Text style={homeStyles.productMrp}>
+                        ₹{product.mrp}
+                      </Text>
 
-                <Text style={homeStyles.productDiscount}>
-                  {product.discount}% OFF
-                </Text>
+                      <Text style={homeStyles.productDiscount}>
+                        {product.discount}% OFF
+                      </Text>
+                    </View>
+
+                    {/* Row 2 → Final Price */}
+                    <Text style={homeStyles.productFinalPrice}>
+                      ₹{product.final_price}
+                    </Text>
+                  </>
+                ) : (
+                  /* No discount → show only price */
+                  <Text style={homeStyles.productFinalPrice}>
+                    ₹{product.final_price}
+                  </Text>
+                )}
               </View>
             </View>
 
