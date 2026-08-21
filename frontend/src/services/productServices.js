@@ -6,6 +6,13 @@ export const getProducts = async () => {
   try {
     const token = await SecureStore.getItemAsync("token");
 
+    if (!token) {
+      return {
+        success: false,
+        message: "No token found",
+      };
+    }
+
     const res = await fetch(`${BASE_URL}/product/view`, {
       method: "GET",
       headers: {
@@ -16,10 +23,14 @@ export const getProducts = async () => {
 
     const text = await res.text();
 
-    const result = JSON.parse(text);
-
-    return result;
-
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      return {
+        success: false,
+        message: "Server returned invalid response",
+      };
+    }
   } catch (error) {
     return {
       success: false,
