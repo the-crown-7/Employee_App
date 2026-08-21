@@ -4,7 +4,6 @@ import db from "../config/db.js";
 export const addProduct = async (req, res) => {
   try {
     const { name, description, mrp, discount } = req.body;
-    
 
     if (!name || !mrp) {
       return res.status(400).json({
@@ -13,19 +12,37 @@ export const addProduct = async (req, res) => {
       });
     }
 
+    // ✅ Convert to number
+    const mrpValue = Number(mrp);
+    const discountValue = Number(discount || 0);
+
+    // ✅ Validate discount
+    if (discountValue < 0 || discountValue > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Discount must be between 0 and 100",
+      });
+    }
+
+    // ✅ Calculate final price
+    const finalPrice = Number(
+      (mrpValue - (mrpValue * discountValue) / 100).toFixed(2)
+    );
+
     // 👇 Cloudinary image URL
     const image = req.file ? req.file.path : null;
 
     const [result] = await db.execute(
-      "INSERT INTO products (name, description, image, mrp, discount) VALUES (?, ?, ?, ?, ?)",
-      [name, description || null, image, mrp, discount || 0]
+      "INSERT INTO products (name, description, image, mrp, discount, final_price) VALUES (?, ?, ?, ?, ?, ?)",
+      [name, description || null, image, mrpValue, discountValue, finalPrice]
     );
 
     return res.json({
       success: true,
       message: "Product added successfully",
       productId: result.insertId,
-      image, // optional return
+      image,
+      final_price: finalPrice, // optional but useful
     });
 
   } catch (error) {

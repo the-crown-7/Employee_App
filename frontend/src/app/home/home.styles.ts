@@ -62,59 +62,59 @@ export const homeStyles = StyleSheet.create({
   },
 
   profileDropdown: {
-  position: 'absolute',
-  top: 70,
-  right: 16,
-  width: 240,
-  backgroundColor: '#fff',
-  borderRadius: 14,
-  padding: 16,
-  zIndex: 10,
-  elevation: 8,
-  alignItems: 'center',
-},
+    position: 'absolute',
+    top: 70,
+    right: 16,
+    width: 240,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 16,
+    zIndex: 10,
+    elevation: 8,
+    alignItems: 'center',
+  },
 
-profileAvatar: {
-  width: 70,
-  height: 70,
-  borderRadius: 35,
-  marginBottom: 10,
-},
+  profileAvatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    marginBottom: 10,
+  },
 
-profileName: {
-  fontSize: 16,
-  fontWeight: '700',
-  color: '#222',
-  marginBottom: 8,
-},
+  profileName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#222',
+    marginBottom: 8,
+  },
 
-divider: {
-  height: 1,
-  width: '100%',
-  backgroundColor: '#eee',
-  marginVertical: 10,
-},
+  divider: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#eee',
+    marginVertical: 10,
+  },
 
-infoRow: {
-  width: '100%',
-  marginBottom: 6,
-},
+  infoRow: {
+    width: '100%',
+    marginBottom: 6,
+  },
 
-label: {
-  fontSize: 11,
-  color: '#888',
-},
+  label: {
+    fontSize: 11,
+    color: '#888',
+  },
 
-value: {
-  fontSize: 13,
-  fontWeight: '600',
-  color: '#222',
-},
+  value: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#222',
+  },
 
-loadingText: {
-  fontSize: 14,
-  color: '#555',
-},
+  loadingText: {
+    fontSize: 14,
+    color: '#555',
+  },
 
   contentContainer: {
     padding: 16,
@@ -171,6 +171,12 @@ loadingText: {
     marginRight: 8,
   },
 
+  productFinalPrice: {
+  fontSize: 16,
+  fontWeight: 'bold',
+  color: 'green',
+  marginTop: 2,   
+},
   productDiscount: {
     fontSize: 13,
     color: '#2e8b57',
@@ -217,9 +223,9 @@ loadingText: {
     flexDirection: 'row',
     marginTop: 12,
     marginBottom: 20,
-    alignItems:'center',
-    gap:20,
-    justifyContent:'center',
+    alignItems: 'center',
+    gap: 20,
+    justifyContent: 'center',
   },
   socialIcon: {
     fontSize: 22,
