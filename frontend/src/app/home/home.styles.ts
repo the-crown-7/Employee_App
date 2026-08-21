@@ -1,10 +1,18 @@
 import { StyleSheet } from 'react-native';
 
 export const homeStyles = StyleSheet.create({
+
   screen: {
     flex: 1,
     backgroundColor: '#f7f7f7',
   },
+
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -15,31 +23,35 @@ export const homeStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
+
   headerLogo: {
     width: 40,
     height: 40,
     borderRadius: 20,
   },
+
   headerCenter: {
     flex: 1,
     alignItems: 'center',
   },
+
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: '#222',
   },
+
   headerSubtitle: {
     fontSize: 11,
     color: '#888',
-    marginTop: 2,
   },
+
   headerAvatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#ddd',
   },
+
   overlay: {
     position: 'absolute',
     top: 0,
@@ -48,118 +60,140 @@ export const homeStyles = StyleSheet.create({
     bottom: 0,
     zIndex: 5,
   },
+
   profileDropdown: {
-    position: 'absolute',
-    top: 64,
-    right: 16,
-    width: 200,
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    zIndex: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 6,
-  },
-  profileAvatarCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#f2f2f2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    marginBottom: 12,
-  },
-  profileAvatarImage: {
-    width: '100%',
-    height: '100%',
-  },
-  profileLabel: {
-    fontSize: 11,
-    color: '#999',
-    marginTop: 8,
-    alignSelf: 'flex-start',
-  },
-  profileValue: {
-    fontSize: 14,
-    color: '#222',
-    fontWeight: '600',
-    alignSelf: 'flex-start',
-  },
-  content: {
-    flex: 1,
-  },
+  position: 'absolute',
+  top: 70,
+  right: 16,
+  width: 240,
+  backgroundColor: '#fff',
+  borderRadius: 14,
+  padding: 16,
+  zIndex: 10,
+  elevation: 8,
+  alignItems: 'center',
+},
+
+profileAvatar: {
+  width: 70,
+  height: 70,
+  borderRadius: 35,
+  marginBottom: 10,
+},
+
+profileName: {
+  fontSize: 16,
+  fontWeight: '700',
+  color: '#222',
+  marginBottom: 8,
+},
+
+divider: {
+  height: 1,
+  width: '100%',
+  backgroundColor: '#eee',
+  marginVertical: 10,
+},
+
+infoRow: {
+  width: '100%',
+  marginBottom: 6,
+},
+
+label: {
+  fontSize: 11,
+  color: '#888',
+},
+
+value: {
+  fontSize: 13,
+  fontWeight: '600',
+  color: '#222',
+},
+
+loadingText: {
+  fontSize: 14,
+  color: '#555',
+},
+
   contentContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 32,
+    padding: 16,
+    paddingBottom: 30,
   },
+
   card: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 12,
     marginBottom: 14,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
     elevation: 2,
+    position: 'relative',
+    minHeight: 110,
   },
+
   productImage: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 80,
+    height: 80,
+    borderRadius: 12,
+    marginRight: 12,
     backgroundColor: '#f0f0f0',
-    marginRight: 14,
   },
+
   cardInfo: {
     flex: 1,
     justifyContent: 'center',
   },
+
   productName: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#222',
   },
+
   productDescription: {
     fontSize: 12,
     color: '#777',
     marginTop: 2,
     marginBottom: 6,
   },
+
   priceRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
   },
+
   productMrp: {
     fontSize: 13,
     color: '#999',
     textDecorationLine: 'line-through',
     marginRight: 8,
   },
+
   productDiscount: {
     fontSize: 13,
     color: '#2e8b57',
-    fontWeight: '600',
+    fontWeight: '700',
   },
+
   sellButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#4a90e2',
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
+    backgroundColor: '#16a34a',
+    paddingVertical: 7,
     paddingHorizontal: 18,
-    paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 8,
+    elevation: 3,
   },
+
   sellButtonText: {
     color: '#fff',
+    fontWeight: '700',
     fontSize: 13,
-    fontWeight: '600',
   },
+
   footer: {
     marginTop: 12,
     paddingVertical: 24,
@@ -191,15 +225,5 @@ export const homeStyles = StyleSheet.create({
     fontSize: 22,
     marginHorizontal: 10,
   },
-  openAccountButton: {
-    backgroundColor: '#4a90e2',
-    paddingHorizontal: 32,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  openAccountButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
+
 });
