@@ -28,7 +28,6 @@ export default function HomeScreen() {
   const [employee, setEmployee] = useState<any>(null);
   const [profileLoading, setProfileLoading] = useState(false);
 
-  // ✅ CORRECT HOOK
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -47,16 +46,11 @@ export default function HomeScreen() {
     }
   };
 
-  const handleSell = (productId: string) => {
-  };
-
-  // PROFILE FETCH
   const handleProfileOpen = async () => {
     setShowProfile(true);
     setProfileLoading(true);
 
     const res = await fetchProfileAPI();
-
 
     if (res.success) {
       setEmployee(res.profile);
@@ -65,7 +59,6 @@ export default function HomeScreen() {
     setProfileLoading(false);
   };
 
-  // LOGOUT
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync('token');
     setShowProfile(false);
@@ -98,7 +91,6 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        {/* AVATAR */}
         <TouchableOpacity onPress={handleProfileOpen}>
           <Image
             source={require('../../../assets/images/avater.png')}
@@ -116,11 +108,8 @@ export default function HomeScreen() {
           />
 
           <View style={homeStyles.profileDropdown}>
-
             {profileLoading ? (
-              <Text style={homeStyles.loadingText}>
-                Loading profile...
-              </Text>
+              <Text style={homeStyles.loadingText}>Loading profile...</Text>
             ) : employee ? (
               <>
                 <Image
@@ -152,7 +141,6 @@ export default function HomeScreen() {
                   </Text>
                 </View>
 
-                {/* LOGOUT INSIDE DROPDOWN */}
                 <TouchableOpacity
                   style={{
                     marginTop: 12,
@@ -167,14 +155,12 @@ export default function HomeScreen() {
                     Logout
                   </Text>
                 </TouchableOpacity>
-
               </>
             ) : (
               <Text style={homeStyles.loadingText}>
-                Failed to load profile. Please try again.
+                Failed to load profile
               </Text>
             )}
-
           </View>
         </>
       )}
@@ -185,12 +171,22 @@ export default function HomeScreen() {
         {products.map((product: any) => (
           <View key={product.id} style={homeStyles.card}>
 
-            <Image
-              source={{
-                uri: product.image || 'https://via.placeholder.com/150',
-              }}
-              style={homeStyles.productImage}
-            />
+            {/* ✅ IMAGE CLICK FEATURE ADDED */}
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: '/image/image',
+                  params: { image: product.image },
+                })
+              }
+            >
+              <Image
+                source={{
+                  uri: product.image || 'https://via.placeholder.com/150',
+                }}
+                style={homeStyles.productImage}
+              />
+            </TouchableOpacity>
 
             <View style={homeStyles.cardInfo}>
               <Text style={homeStyles.productName}>
@@ -201,51 +197,58 @@ export default function HomeScreen() {
                 {product.description}
               </Text>
 
-              <View>
-                {Number(product.discount) > 0 ? (
-                  <>
-                    {/* Row 1 → MRP + Discount */}
-                    <View style={homeStyles.priceRow}>
-                      <Text style={homeStyles.productMrp}>
-                        ₹{product.mrp}
-                      </Text>
-
-                      <Text style={homeStyles.productDiscount}>
-                        {product.discount}% OFF
-                      </Text>
-                    </View>
-
-                    {/* Row 2 → Final Price */}
-                    <Text style={homeStyles.productFinalPrice}>
-                      ₹{product.final_price}
+              {Number(product.discount) > 0 ? (
+                <>
+                  <View style={homeStyles.priceRow}>
+                    <Text style={homeStyles.productMrp}>
+                      ₹{product.mrp}
                     </Text>
-                  </>
-                ) : (
-                  /* No discount → show only price */
+
+                    <Text style={homeStyles.productDiscount}>
+                      {product.discount}% OFF
+                    </Text>
+                  </View>
+
                   <Text style={homeStyles.productFinalPrice}>
                     ₹{product.final_price}
                   </Text>
-                )}
-              </View>
+                </>
+              ) : (
+                <Text style={homeStyles.productFinalPrice}>
+                  ₹{product.final_price}
+                </Text>
+              )}
             </View>
 
             <TouchableOpacity
               style={homeStyles.sellButton}
-              onPress={() => handleSell(product.id)}
+              onPress={() =>
+                router.push({
+                  pathname: '/sell/sell',
+                  params: {
+                    id: product.id,
+                    name: product.name,
+                    amount: product.final_price || product.mrp,
+                  },
+                })
+              }
             >
-              <Text style={homeStyles.sellButtonText}>Sell</Text>
+              <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+                Sell
+              </Text>
             </TouchableOpacity>
 
           </View>
         ))}
 
-        {/* FOOTER */}
+
+        {/*Footer*/}
         <View style={homeStyles.footer}>
           <Text style={homeStyles.footerAddress}>
-            123 Market Street, Kolkata, West Bengal, India
+            6, Dumdum  Road Kolkata - 700030
           </Text>
-          <Text style={homeStyles.footerContact}>tcckol@example.com</Text>
-          <Text style={homeStyles.footerContact}>+91 98765 43210</Text>
+          <Text style={homeStyles.footerContact}>thecrownconsultancy7@gmail.com</Text>
+          <Text style={homeStyles.footerContact}>+91 91473 67703</Text>
 
           <View style={homeStyles.socialRow}>
             <TouchableOpacity onPress={() => Linking.openURL('https://www.facebook.com/profile.php?id=61593189241605')}>
@@ -267,7 +270,6 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
-
       </ScrollView>
 
     </SafeAreaView>

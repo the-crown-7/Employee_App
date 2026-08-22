@@ -73,11 +73,9 @@ export default function RegisterScreen() {
         password,
       };
 
-      console.log("Sending:", userData);
 
       const result = await registerUser(userData);
 
-      console.log("Response:", result);
 
       if (result.success) {
         Alert.alert("Success", "Registered successfully");
@@ -86,7 +84,6 @@ export default function RegisterScreen() {
         Alert.alert("Error", result.message);
       }
     } catch (error) {
-      console.log("Register error:", error);
       Alert.alert("Error", "Something went wrong");
     }
   };

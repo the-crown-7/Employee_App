@@ -43,7 +43,7 @@ export const loginEmployee = async (req, res) => {
         email: user.email
       },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "9h" }
     );
 
     return res.status(200).json({

@@ -4,6 +4,7 @@ import registerRoute from "./routes/registerRoute.js";
 import loginRoute from "./routes/loginRoute.js";
 import profileRoute from "./routes/profileRoute.js";
 import productRoute from "./routes/productRoute.js";
+import orderRoute from "./routes/orderRoute.js";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use("/api/auth", registerRoute);
 app.use("/api/auth", loginRoute);
 app.use("/api/auth", profileRoute);
 app.use("/api/product", productRoute);
+app.use("/api/order", orderRoute);
 
 app.get("/health", (req, res) => {
   res.json({ message: "Server running" });
