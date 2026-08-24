@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { sellStyles } from './sell.styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,11 +6,46 @@ import { createOrder } from '../../services/orderServices';
 import { useState } from 'react';
 
 export default function SellScreen() {
-  const { name, amount } = useLocalSearchParams();
+  const params = useLocalSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
+  const name = Array.isArray(params.name) ? params.name[0] : params.name;
+  const amount = Array.isArray(params.amount) ? params.amount[0] : params.amount;
+
   const upiId = "thecr85838194@barodampay";
+
+  const handleDone = async () => {
+    if (loading) return;
+
+    try {
+      setLoading(true);
+
+      
+
+      const result = await createOrder(
+        name as string,
+        Number(amount)
+      );
+
+
+      if (result?.success) {
+        router.push({
+          pathname: '/success/success',
+          params: {
+            order_id: result.order_id,
+          },
+        });
+      } else {
+        Alert.alert("Order Failed", result?.message || "Something went wrong");
+      }
+
+    } catch (error) {
+      Alert.alert("Error", "Failed to create order");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
@@ -44,32 +79,7 @@ export default function SellScreen() {
         <TouchableOpacity
           style={sellStyles.doneButton}
           disabled={loading}
-          onPress={async () => {
-            if (loading) return;
-
-            try {
-              setLoading(true);
-
-              const result = await createOrder(
-                name as string,
-                Number(amount)
-              );
-
-
-              if (result.success) {
-                router.push({
-                  pathname: '/success/success',
-                  params: {
-                    order_id: result.order_id, // 🔥 ONLY THIS IMPORTANT
-                  },
-                });
-              }
-
-            } catch (error) {
-            } finally {
-              setLoading(false);
-            }
-          }}
+          onPress={handleDone}
         >
           <Text style={sellStyles.doneText}>
             {loading ? "Processing..." : "Done"}
