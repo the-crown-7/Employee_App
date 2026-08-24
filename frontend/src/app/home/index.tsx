@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import { useRouter } from 'expo-router';
+import {jwtDecode} from "jwt-decode";
 
 import { homeStyles } from './home.styles';
 import { getProducts } from '../../services/productServices';
@@ -29,17 +30,60 @@ export default function HomeScreen() {
   const [profileLoading, setProfileLoading] = useState(false);
 
   useEffect(() => {
-    fetchProducts();
+    init();
   }, []);
+
+  const init = async () => {
+    const isValid = await checkAuth();
+
+    if (isValid) {
+      fetchProducts();
+    }
+  };
+
+  const checkAuth = async () => {
+    const token = await SecureStore.getItemAsync("token");
+
+    if (!token) {
+      router.replace("/login");
+      return false;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+
+      if (decoded.exp < currentTime) {
+        await SecureStore.deleteItemAsync("token");
+        router.replace("/login");
+        return false;
+      }
+
+      return true; // ✅ valid token
+
+    } catch (err) {
+      await SecureStore.deleteItemAsync("token");
+      router.replace("/login");
+      return false;
+    }
+  };
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
       const result = await getProducts();
 
+
+      if (result.message === "Token error") {
+        await SecureStore.deleteItemAsync("token");
+        router.replace("/login");
+        return;
+      }
+
       if (result.success) {
         setProducts(result.products || result.data || []);
       }
+
     } catch (error) {
     } finally {
       setLoading(false);
