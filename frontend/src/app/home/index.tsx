@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import { useRouter } from 'expo-router';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 import { homeStyles } from './home.styles';
 import { getProducts } from '../../services/productServices';
@@ -35,9 +35,8 @@ export default function HomeScreen() {
 
   const init = async () => {
     const isValid = await checkAuth();
-
     if (isValid) {
-      fetchProducts();
+      await fetchProducts();
     }
   };
 
@@ -59,8 +58,7 @@ export default function HomeScreen() {
         return false;
       }
 
-      return true; // ✅ valid token
-
+      return true;
     } catch (err) {
       await SecureStore.deleteItemAsync("token");
       router.replace("/login");
@@ -71,20 +69,20 @@ export default function HomeScreen() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
+
       const result = await getProducts();
 
 
-      if (result.message === "Token error") {
-        await SecureStore.deleteItemAsync("token");
-        router.replace("/login");
+      if (!result || result.success === false) {
+        setProducts([]);
         return;
       }
 
-      if (result.success) {
-        setProducts(result.products || result.data || []);
-      }
+      const productsArray = result?.products ?? [];
+      setProducts(productsArray);
 
     } catch (error) {
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -213,25 +211,31 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={homeStyles.contentContainer}>
 
         {products.map((product: any) => (
-          <View key={product.id} style={homeStyles.card}>
+          <View
+            key={product.id}
+            style={homeStyles.card}
+          >
 
-            {/* ✅ IMAGE CLICK FEATURE ADDED */}
+            {/* IMAGE */}
             <TouchableOpacity
               onPress={() =>
                 router.push({
                   pathname: '/image/image',
-                  params: { image: product.image },
+                  params: {
+                    image: product.image_url,
+                  },
                 })
               }
             >
               <Image
                 source={{
-                  uri: product.image || 'https://via.placeholder.com/150',
+                  uri: product.image_url || 'https://via.placeholder.com/150',
                 }}
                 style={homeStyles.productImage}
               />
             </TouchableOpacity>
 
+            {/* INFO */}
             <View style={homeStyles.cardInfo}>
               <Text style={homeStyles.productName}>
                 {product.name}
@@ -264,6 +268,7 @@ export default function HomeScreen() {
               )}
             </View>
 
+            {/* SELL BUTTON */}
             <TouchableOpacity
               style={homeStyles.sellButton}
               onPress={() =>
@@ -272,7 +277,7 @@ export default function HomeScreen() {
                   params: {
                     id: product.id,
                     name: product.name,
-                    amount: product.final_price || product.mrp,
+                    amount: product.final_price,
                   },
                 })
               }
@@ -285,14 +290,19 @@ export default function HomeScreen() {
           </View>
         ))}
 
-
-        {/*Footer*/}
+        {/* FOOTER */}
         <View style={homeStyles.footer}>
           <Text style={homeStyles.footerAddress}>
-            6, Dumdum  Road Kolkata - 700030
+            6, Dumdum Road Kolkata - 700030
           </Text>
-          <Text style={homeStyles.footerContact}>thecrownconsultancy7@gmail.com</Text>
-          <Text style={homeStyles.footerContact}>+91 91473 67703</Text>
+
+          <Text style={homeStyles.footerContact}>
+            thecrownconsultancy7@gmail.com
+          </Text>
+
+          <Text style={homeStyles.footerContact}>
+            +91 91473 67703
+          </Text>
 
           <View style={homeStyles.socialRow}>
             <TouchableOpacity onPress={() => Linking.openURL('https://www.facebook.com/profile.php?id=61593189241605')}>
@@ -303,9 +313,7 @@ export default function HomeScreen() {
               <FontAwesome name="whatsapp" size={24} color="#25D366" />
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => Linking.openURL('https://www.instagram.com/tcc536')}
-            >
+            <TouchableOpacity onPress={() => Linking.openURL('https://www.instagram.com/tcc536')}>
               <FontAwesome name="instagram" size={24} color="#E4405F" />
             </TouchableOpacity>
 
@@ -314,8 +322,8 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
 
+      </ScrollView>
     </SafeAreaView>
   );
 }

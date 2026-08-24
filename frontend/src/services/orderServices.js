@@ -25,6 +25,11 @@ export const createOrder = async (product_name, amount) => {
       }),
     });
 
+    const data = await res.json();
+
+
+    return data;
+
     const text = await res.text();
 
     try {
@@ -34,12 +39,13 @@ export const createOrder = async (product_name, amount) => {
         success: false,
         message: "Invalid server response",
       };
-    }
+    }   
 
   } catch (error) {
-    return {
-      success: false,
-      message: "Network error",
-    };
-  }
+
+  return res.status(500).json({
+    success: false,
+    message: error.message,
+  });
+}
 };
