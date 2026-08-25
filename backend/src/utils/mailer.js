@@ -13,7 +13,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-transporter.verify((error) => {
+// safer verification
+transporter.verify((error, success) => {
   if (error) {
     console.log("❌ SMTP ERROR:", error.message);
   } else {
@@ -22,14 +23,22 @@ transporter.verify((error) => {
 });
 
 export const sendEmail = async (to, subject, html) => {
-  console.log("📨 SENDING EMAIL TO:", to);
+  try {
+    console.log("📨 SENDING EMAIL TO:", to);
+    console.log("📧 FROM EMAIL:", process.env.EMAIL_USER);
 
-  const info = await transporter.sendMail({
-    from: `"TCCKOL" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    html,
-  });
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_USER,   // ✅ IMPORTANT FIX (no alias wrapping)
+      to,
+      subject,
+      html,
+    });
 
-  console.log("📩 EMAIL INFO:", info.response);
+    console.log("📩 EMAIL SENT:", info.messageId || info.response);
+    return info;
+
+  } catch (error) {
+    console.error("❌ EMAIL FAILED:", error);
+    throw error;
+  }
 };
