@@ -11,7 +11,6 @@ import {
   View,
   Alert,
 } from 'react-native';
-
 import { registerStyles } from './register.styles';
 import { registerUser } from '../../services/registerServices';
 
@@ -25,9 +24,8 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     const trimmedName = name.trim();
-    const trimmedEmail = email.trim();
+    const trimmedEmail = email.trim().toLowerCase();
 
-    // ✅ validation
     if (!trimmedName || !trimmedEmail || !password) {
       Alert.alert("Error", "All fields are required");
       return;
@@ -35,13 +33,13 @@ export default function RegisterScreen() {
 
     const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)+$/;
     if (!nameRegex.test(trimmedName)) {
-      setError('Please enter your full name');
+      setError("Please enter your full name");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedEmail)) {
-      setError('Please enter a valid email');
+      setError("Please enter a valid email");
       return;
     }
 
@@ -51,16 +49,8 @@ export default function RegisterScreen() {
     const hasSpecial = /[@$!%*?&]/.test(password);
     const hasMinLength = password.length >= 8;
 
-    if (
-      !hasMinLength ||
-      !hasUppercase ||
-      !hasLowercase ||
-      !hasNumber ||
-      !hasSpecial
-    ) {
-      setError(
-        'Password must be 8+ chars with uppercase, lowercase, number, special char'
-      );
+    if (!hasMinLength || !hasUppercase || !hasLowercase || !hasNumber || !hasSpecial) {
+      setError("Password must be 8+ chars with uppercase, lowercase, number, special char");
       return;
     }
 
@@ -70,12 +60,12 @@ export default function RegisterScreen() {
       const userData = {
         name: trimmedName,
         email: trimmedEmail,
-        password,
+        password: password.trim(),
       };
 
+      console.log("REGISTER DATA:", userData);
 
       const result = await registerUser(userData);
-
 
       if (result.success) {
         Alert.alert("Success", "Registered successfully");
@@ -83,72 +73,54 @@ export default function RegisterScreen() {
       } else {
         Alert.alert("Error", result.message);
       }
+
     } catch (error) {
+      console.log(error);
       Alert.alert("Error", "Something went wrong");
     }
   };
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#ffffff' }}
+      style={{ flex: 1, backgroundColor: '#fff' }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        contentContainerStyle={registerStyles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView keyboardShouldPersistTaps="handled">
         <View style={registerStyles.container}>
 
-          <View style={registerStyles.logoCircle}>
-            <Image
-              source={require('../../../assets/images/logo.png')}
-              style={registerStyles.logoImage}
-              resizeMode="contain"
-            />
-          </View>
+          <Image
+            source={require('../../../assets/images/logo.png')}
+            style={registerStyles.logoImage}
+            resizeMode="contain"
+          />
 
-          {error ? (
-            <Text style={registerStyles.errorText}>{error}</Text>
-          ) : null}
+          {error ? <Text style={registerStyles.errorText}>{error}</Text> : null}
 
           <TextInput
-            style={registerStyles.input}
             placeholder="Name"
-            placeholderTextColor="#999"
             value={name}
             onChangeText={setName}
+            style={registerStyles.input}
           />
 
           <TextInput
-            style={registerStyles.input}
             placeholder="Email"
-            placeholderTextColor="#999"
-            keyboardType="email-address"
-            autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
+            style={registerStyles.input}
+            autoCapitalize="none"
           />
 
           <TextInput
-            style={registerStyles.input}
             placeholder="Password"
-            placeholderTextColor="#999"
-            secureTextEntry
             value={password}
             onChangeText={setPassword}
+            secureTextEntry
+            style={registerStyles.input}
           />
 
-          <TouchableOpacity
-            style={registerStyles.button}
-            onPress={handleRegister}
-          >
+          <TouchableOpacity style={registerStyles.button} onPress={handleRegister}>
             <Text style={registerStyles.buttonText}>Register</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => router.push('/login')}>
-            <Text style={registerStyles.loginText}>
-              Already have an account? Login
-            </Text>
           </TouchableOpacity>
 
         </View>
