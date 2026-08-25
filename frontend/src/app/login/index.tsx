@@ -19,6 +19,7 @@ export default function LoginScreen() {
 
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
@@ -78,14 +79,29 @@ export default function LoginScreen() {
             onChangeText={setEmployeeId}
           />
 
-          <TextInput
-            style={loginStyles.input}
-            placeholder="Password"
-            placeholderTextColor="#999"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={loginStyles.passwordContainer}>
+            <TextInput
+              key={showPassword ? 'password-visible' : 'password-hidden'}
+              style={loginStyles.passwordInput}
+              placeholder="Password"
+              placeholderTextColor="#999"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              style={loginStyles.passwordToggleButton}
+              onPress={() => setShowPassword((visible) => !visible)}
+              activeOpacity={0.7}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+            >
+              <Text style={loginStyles.passwordToggle}>
+                {showPassword ? 'Hide' : 'Show'}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity style={loginStyles.button} onPress={handleLogin}>
             <Text style={loginStyles.buttonText}>Login</Text>
