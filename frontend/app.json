@@ -43,8 +43,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "86c7f909-1d0b-4efb-bdae-ec99ae6c69ec"
+        "projectId": "489e6f32-f96b-4688-92c3-8c58bdd22ae2"
       }
-    }
+    },
+    "owner": "the-crown-consultancy-099"
   }
 }
