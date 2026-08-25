@@ -6,8 +6,7 @@ if (!BASE_URL) {
 
 export const registerUser = async (data) => {
   try {
-
-    const res = await fetch(`${BASE_URL}/auth/register`, {
+    const response = await fetch(`${BASE_URL}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -15,27 +14,11 @@ export const registerUser = async (data) => {
       body: JSON.stringify(data),
     });
 
-    console.log("Status:", res.status);
-
-    const result = await res.json();
-
-    console.log("Response:", result);
-
-    // handle backend error responses
-    if (!res.ok) {
-      return {
-        success: false,
-        message: result.message || "Registration failed",
-      };
-    }
+    const result = await response.json();
+    console.log("REGISTER RESPONSE:", result);
 
     return result;
-
   } catch (error) {
-    console.log("REGISTER API ERROR:", error);
-    return {
-      success: false,
-      message: "Network error",
-    };
+    console.log("REGISTER ERROR:", error);
   }
 };

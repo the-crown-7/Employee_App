@@ -25,7 +25,6 @@ export const registerEmployee = async (req, res) => {
 
     // 3. Generate Employee ID
     const employee_id = generateEmployeeId();
-
     console.log("Generated Employee ID:", employee_id);
 
     // 4. Save to DB
@@ -34,42 +33,42 @@ export const registerEmployee = async (req, res) => {
       [employee_id, name, email, hashedPassword]
     );
 
-    // 5. Send email (IMPORTANT FIXED HTML FORMAT)
-    try {
-      await sendEmail(
-        email,
-        "Your Employee ID - Registration Successful",
-        `
-          <div style="font-family: Arial, sans-serif; padding: 10px;">
-            <h2>Welcome ${name}</h2>
-            <p>Your registration is successful.</p>
-
-            <hr />
-
-            <h3 style="color: #2c3e50;">
-              Your Employee ID:
-              <span style="color: green;">${employee_id}</span>
-            </h3>
-
-            <p>Please save this ID for login purposes.</p>
-
-            <br />
-            <p>Regards,<br/>TCCKOL Team</p>
-          </div>
-        `
-      );
-
-      console.log("Email sent successfully");
-    } catch (err) {
-      console.log("Email failed but user registered:", err.message);
-    }
-
-    // 6. Response
-    return res.status(201).json({
+    // ✅ 5. SEND RESPONSE FIRST (NO DELAY)
+    res.status(201).json({
       success: true,
-      message: "Registration successful. Employee ID sent to email",
+      message: "Registration successful. Employee ID will be sent to email",
       employee_id,
     });
+
+    // ✅ 6. SEND EMAIL IN BACKGROUND (NON-BLOCKING)
+    sendEmail(
+      email,
+      "Your Employee ID - Registration Successful",
+      `
+        <div style="font-family: Arial, sans-serif; padding: 10px;">
+          <h2>Welcome ${name}</h2>
+          <p>Your registration is successful.</p>
+
+          <hr />
+
+          <h3 style="color: #2c3e50;">
+            Your Employee ID:
+            <span style="color: green;">${employee_id}</span>
+          </h3>
+
+          <p>Please save this ID for login purposes.</p>
+
+          <br />
+          <p>Regards,<br/>TCCKOL Team</p>
+        </div>
+      `
+    )
+      .then(() => {
+        console.log("📩 Email sent successfully");
+      })
+      .catch((err) => {
+        console.log("❌ Email failed:", err.message);
+      });
 
   } catch (error) {
     console.log("Register error:", error);
