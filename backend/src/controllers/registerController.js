@@ -9,6 +9,7 @@ export const registerEmployee = async (req, res) => {
 
     console.log("📩 EMAIL FROM FRONTEND:", email);
 
+    // 1. Check existing user
     const [existing] = await db.execute(
       "SELECT * FROM employees WHERE email = ?",
       [email]
@@ -21,33 +22,47 @@ export const registerEmployee = async (req, res) => {
       });
     }
 
+    // 2. Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 3. Generate employee ID
     const employee_id = generateEmployeeId();
 
+    // 4. Save to DB
     await db.execute(
       "INSERT INTO employees (employee_id, name, email, password) VALUES (?,?,?,?)",
       [employee_id, name, email, hashedPassword]
     );
 
-    // ✅ send response first (NO WAIT)
-    res.status(201).json({
+    // 5. SEND EMAIL SAFELY (DO NOT BLOCK RESPONSE)
+    setImmediate(async () => {
+      try {
+        await sendEmail(
+          email,
+          "Your Employee ID - TCCKOL",
+          `
+            <div style="font-family: Arial; padding: 10px;">
+              <h2>Welcome ${name}</h2>
+              <p>Your Employee ID is:</p>
+              <h3 style="color:#2E86C1">${employee_id}</h3>
+              <p>Please keep it safe.</p>
+            </div>
+          `
+        );
+
+        console.log("📩 EMAIL SENT SUCCESSFULLY to:", email);
+      } catch (err) {
+        console.log("❌ EMAIL FAILED:", err.message);
+      }
+    });
+
+    // 6. RESPONSE SENT IMMEDIATELY
+    return res.status(201).json({
       success: true,
       message: "Registered successfully",
       employee_id,
+      setImmediate: true, // Indicates that email sending is handled asynchronously;
     });
-
-    // ✅ email in background
-    sendEmail(
-      email,
-      "Your Employee ID - TCCKOL",
-      `
-        <h2>Welcome ${name}</h2>
-        <p>Your Employee ID:</p>
-        <h3>${employee_id}</h3>
-      `
-    )
-      .then(() => console.log("📩 EMAIL SENT SUCCESSFULLY"))
-      .catch((err) => console.log("❌ EMAIL FAILED:", err.message));
 
   } catch (error) {
     console.log("Register error:", error);
