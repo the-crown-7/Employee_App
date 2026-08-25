@@ -1,11 +1,12 @@
 import * as SecureStore from 'expo-secure-store';
+import { API_BASE_URL } from './api';
 
 export const fetchProfileAPI = async () => {
   try {
     const token = await SecureStore.getItemAsync('token');
 
     const res = await fetch(
-      `${process.env.EXPO_PUBLIC_API_URL}/auth/profile`,
+      `${API_BASE_URL}/auth/profile`,
       {
         method: 'GET',
         headers: {

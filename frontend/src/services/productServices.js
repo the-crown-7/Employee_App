@@ -1,6 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { API_BASE_URL } from "./api";
 
 export const getProducts = async () => {
   try {
@@ -13,7 +12,7 @@ export const getProducts = async () => {
       };
     }
 
-    const res = await fetch(`${BASE_URL}/product/view`, {
+    const res = await fetch(`${API_BASE_URL}/product/view`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
