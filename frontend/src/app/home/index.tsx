@@ -14,6 +14,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import { useRouter } from 'expo-router';
 import { jwtDecode } from "jwt-decode";
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 
 import { homeStyles } from './home.styles';
 import { getProducts } from '../../services/productServices';
@@ -28,43 +30,52 @@ export default function HomeScreen() {
 
   const [employee, setEmployee] = useState<any>(null);
   const [profileLoading, setProfileLoading] = useState(false);
-
-  useEffect(() => {
-    init();
-  }, []);
+  const [authChecking, setAuthChecking] = useState(true);
 
   const init = async () => {
-    const isValid = await checkAuth();
-    if (isValid) {
-      await fetchProducts();
-    }
-  };
+  setAuthChecking(true);
 
+  const isValid = await checkAuth();
+
+  if (isValid) {
+    await fetchProducts();
+  }
+
+  setAuthChecking(false);
+};
+
+  useFocusEffect(
+    useCallback(() => {
+      init();
+    }, [])
+  );
+
+  
   const checkAuth = async () => {
-    const token = await SecureStore.getItemAsync("token");
+  const token = await SecureStore.getItemAsync("token");
 
-    if (!token) {
-      router.replace("/login");
-      return false;
-    }
+  if (!token) {
+    router.replace("/login");
+    return false;
+  }
 
-    try {
-      const decoded: any = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
+  try {
+    const decoded: any = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
 
-      if (decoded.exp < currentTime) {
-        await SecureStore.deleteItemAsync("token");
-        router.replace("/login");
-        return false;
-      }
-
-      return true;
-    } catch (err) {
+    if (!decoded.exp || decoded.exp < currentTime) {
       await SecureStore.deleteItemAsync("token");
       router.replace("/login");
       return false;
     }
-  };
+
+    return true;
+  } catch (err) {
+    await SecureStore.deleteItemAsync("token");
+    router.replace("/login");
+    return false;
+  }
+};
 
   const fetchProducts = async () => {
     try {
