@@ -10,19 +10,15 @@ export const fetchProfileAPI = async () => {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
         },
       }
     );
 
-    const text = await res.text();
+    const data = await res.json();
 
-    try {
-      return JSON.parse(text);
-    } catch {
-      console.log("NOT JSON RESPONSE:", text);
-      return { success: false };
-    }
+    console.log("PROFILE API RESPONSE:", data);
+
+    return data;
   } catch (error) {
     console.log('PROFILE ERROR:', error);
     return { success: false };

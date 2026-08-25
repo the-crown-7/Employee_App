@@ -33,16 +33,16 @@ export default function HomeScreen() {
   const [authChecking, setAuthChecking] = useState(true);
 
   const init = async () => {
-  setAuthChecking(true);
+    setAuthChecking(true);
 
-  const isValid = await checkAuth();
+    const isValid = await checkAuth();
 
-  if (isValid) {
-    await fetchProducts();
-  }
+    if (isValid) {
+      await fetchProducts();
+    }
 
-  setAuthChecking(false);
-};
+    setAuthChecking(false);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -50,32 +50,32 @@ export default function HomeScreen() {
     }, [])
   );
 
-  
+
   const checkAuth = async () => {
-  const token = await SecureStore.getItemAsync("token");
+    const token = await SecureStore.getItemAsync("token");
 
-  if (!token) {
-    router.replace("/login");
-    return false;
-  }
-
-  try {
-    const decoded: any = jwtDecode(token);
-    const currentTime = Date.now() / 1000;
-
-    if (!decoded.exp || decoded.exp < currentTime) {
-      await SecureStore.deleteItemAsync("token");
+    if (!token) {
       router.replace("/login");
       return false;
     }
 
-    return true;
-  } catch (err) {
-    await SecureStore.deleteItemAsync("token");
-    router.replace("/login");
-    return false;
-  }
-};
+    try {
+      const decoded: any = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+
+      if (!decoded.exp || decoded.exp < currentTime) {
+        await SecureStore.deleteItemAsync("token");
+        router.replace("/login");
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      await SecureStore.deleteItemAsync("token");
+      router.replace("/login");
+      return false;
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -100,17 +100,24 @@ export default function HomeScreen() {
   };
 
   const handleProfileOpen = async () => {
-    setShowProfile(true);
-    setProfileLoading(true);
+  setShowProfile(true);
+  setProfileLoading(true);
 
-    const res = await fetchProfileAPI();
+  const res = await fetchProfileAPI();
 
-    if (res.success) {
-      setEmployee(res.profile);
-    }
 
-    setProfileLoading(false);
-  };
+  if (res?.success && res?.profile) {
+    setEmployee(res.profile || res.employee || res.data);
+  } else {
+
+    await SecureStore.deleteItemAsync('token');
+    setEmployee(null);
+    setShowProfile(false);
+    router.replace('/login');
+  }
+
+  setProfileLoading(false);
+};
 
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync('token');
