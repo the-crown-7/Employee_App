@@ -3,28 +3,35 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Gmail transporter
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // MUST be Gmail App Password
+    pass: process.env.EMAIL_PASS,
   },
 });
 
-// Optional: verify SMTP connection on startup
-
+// ✅ ADD THIS
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("❌ SMTP ERROR:", error);
+  } else {
+    console.log("✅ SMTP READY");
+  }
+});
 
 export const sendEmail = async (to, subject, html) => {
   try {
+    console.log("📨 Sending email to:", to);
+
     const mailOptions = {
       from: `"TCCKOL" <${process.env.EMAIL_USER}>`,
       to,
       subject,
-      html, // IMPORTANT: HTML EMAIL
+      html,
     };
 
-    await transporter.sendMail(mailOptions);
+    const info = await transporter.sendMail(mailOptions);
 
   } catch (error) {
     throw error;
