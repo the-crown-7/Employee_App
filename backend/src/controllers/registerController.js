@@ -7,7 +7,8 @@ export const registerEmployee = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // 1. Check if user exists
+    console.log("📩 EMAIL FROM FRONTEND:", email);
+
     const [existing] = await db.execute(
       "SELECT * FROM employees WHERE email = ?",
       [email]
@@ -20,62 +21,39 @@ export const registerEmployee = async (req, res) => {
       });
     }
 
-    // 2. Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // 3. Generate Employee ID
     const employee_id = generateEmployeeId();
-    console.log("Generated Employee ID:", employee_id);
 
-    // 4. Save to DB
     await db.execute(
       "INSERT INTO employees (employee_id, name, email, password) VALUES (?,?,?,?)",
       [employee_id, name, email, hashedPassword]
     );
 
-    // ✅ 5. SEND RESPONSE FIRST (NO DELAY)
+    // ✅ send response first (NO WAIT)
     res.status(201).json({
       success: true,
-      message: "Registration successful. Employee ID will be sent to email",
+      message: "Registered successfully",
       employee_id,
     });
 
-    // ✅ 6. SEND EMAIL IN BACKGROUND (NON-BLOCKING)
+    // ✅ email in background
     sendEmail(
       email,
-      "Your Employee ID - Registration Successful",
+      "Your Employee ID - TCCKOL",
       `
-        <div style="font-family: Arial, sans-serif; padding: 10px;">
-          <h2>Welcome ${name}</h2>
-          <p>Your registration is successful.</p>
-
-          <hr />
-
-          <h3 style="color: #2c3e50;">
-            Your Employee ID:
-            <span style="color: green;">${employee_id}</span>
-          </h3>
-
-          <p>Please save this ID for login purposes.</p>
-
-          <br />
-          <p>Regards,<br/>TCCKOL Team</p>
-        </div>
+        <h2>Welcome ${name}</h2>
+        <p>Your Employee ID:</p>
+        <h3>${employee_id}</h3>
       `
     )
-      .then(() => {
-        console.log("📩 Email sent successfully");
-      })
-      .catch((err) => {
-        console.log("❌ Email failed:", err.message);
-      });
+      .then(() => console.log("📩 EMAIL SENT SUCCESSFULLY"))
+      .catch((err) => console.log("❌ EMAIL FAILED:", err.message));
 
   } catch (error) {
     console.log("Register error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",
-      error: error.message,
     });
   }
 };
