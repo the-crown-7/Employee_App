@@ -1,6 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { API_BASE_URL } from "./api";
 
 export const createOrder = async (product_name, amount) => {
   try {
@@ -13,7 +12,7 @@ export const createOrder = async (product_name, amount) => {
       };
     }
 
-    const res = await fetch(`${BASE_URL}/order/create-order`, {
+    const res = await fetch(`${API_BASE_URL}/order/create-order`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -25,27 +24,12 @@ export const createOrder = async (product_name, amount) => {
       }),
     });
 
-    const data = await res.json();
-
-
-    return data;
-
-    const text = await res.text();
-
-    try {
-      return JSON.parse(text);
-    } catch (e) {
-      return {
-        success: false,
-        message: "Invalid server response",
-      };
-    }   
+    return await res.json();
 
   } catch (error) {
-
-  return res.status(500).json({
-    success: false,
-    message: error.message,
-  });
-}
+    return {
+      success: false,
+      message: "Network error. Check that the backend is running and reachable.",
+    };
+  }
 };

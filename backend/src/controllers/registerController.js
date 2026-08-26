@@ -38,7 +38,6 @@ export const registerEmployee = async (req, res) => {
     setImmediate(async () => {
       try {
         await sendEmail(
-          console.log("📩 SENDING EMAIL TO:", email),
           email,
           "Your Employee ID - TCCKOL",
           `

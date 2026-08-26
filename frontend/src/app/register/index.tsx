@@ -20,6 +20,7 @@ export default function RegisterScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleRegister = async () => {
@@ -123,14 +124,29 @@ export default function RegisterScreen() {
             onChangeText={setEmail}
           />
 
-          <TextInput
-            style={registerStyles.input}
-            placeholder="Password"
-            placeholderTextColor="#999"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={registerStyles.passwordContainer}>
+            <TextInput
+              key={showPassword ? 'password-visible' : 'password-hidden'}
+              style={registerStyles.passwordInput}
+              placeholder="Password"
+              placeholderTextColor="#999"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              style={registerStyles.passwordToggleButton}
+              onPress={() => setShowPassword((visible) => !visible)}
+              activeOpacity={0.7}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+            >
+              <Text style={registerStyles.passwordToggle}>
+                {showPassword ? 'Hide' : 'Show'}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
             style={registerStyles.button}

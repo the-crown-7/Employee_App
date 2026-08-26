@@ -1,10 +1,9 @@
 import * as SecureStore from "expo-secure-store";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { API_BASE_URL } from "./api";
 
 export const loginUser = async (data) => {
   try {
-    const res = await fetch(`${BASE_URL}/auth/login`, {
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
