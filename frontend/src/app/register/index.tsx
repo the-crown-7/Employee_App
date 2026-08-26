@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -22,8 +23,14 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittingRef = useRef(false);
 
   const handleRegister = async () => {
+    if (submittingRef.current) {
+      return;
+    }
+
     const trimmedName = name.trim();
     const trimmedEmail = email.trim().toLowerCase();
 
@@ -56,6 +63,8 @@ export default function RegisterScreen() {
     }
 
     setError('');
+    submittingRef.current = true;
+    setIsSubmitting(true);
 
     try {
       const userData = {
@@ -80,6 +89,9 @@ export default function RegisterScreen() {
     } catch (error) {
       console.log("REGISTER ERROR:", error);
       setError("Something went wrong");
+    } finally {
+      submittingRef.current = false;
+      setIsSubmitting(false);
     }
   };
 
@@ -149,13 +161,21 @@ export default function RegisterScreen() {
           </View>
 
           <TouchableOpacity
-            style={registerStyles.button}
+            style={[registerStyles.button, isSubmitting && { opacity: 0.7 }]}
             onPress={handleRegister}
+            disabled={isSubmitting}
           >
-            <Text style={registerStyles.buttonText}>Register</Text>
+            {isSubmitting ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <Text style={registerStyles.buttonText}>Register</Text>
+            )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push('/login')}>
+          <TouchableOpacity
+            onPress={() => router.push('/login')}
+            disabled={isSubmitting}
+          >
             <Text style={registerStyles.loginText}>
               Already have an account? Login
             </Text>
