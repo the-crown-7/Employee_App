@@ -7,6 +7,12 @@ export const registerEmployee = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "name, email, and password are required",
+      });
+    }
 
     // 1. Check existing user
     const [existing] = await db.execute(
@@ -33,31 +39,38 @@ export const registerEmployee = async (req, res) => {
       [employee_id, name, email, hashedPassword]
     );
 
-    await sendEmail(
-      email,
-      "Your Employee ID - TCCKOL",
-      `
-        <div style="font-family: Arial; padding: 10px;">
-          <h2>Welcome ${name}</h2>
-          <p>Your Employee ID is:</p>
-          <h3 style="color:#2E86C1">${employee_id}</h3>
-          <p>Please keep it safe.</p>
-        </div>
-      `
-    );
+    let email_sent = true;
+
+    try {
+      await sendEmail(
+        email,
+        "Your Employee ID - TCCKOL",
+        `
+          <div style="font-family: Arial; padding: 10px;">
+            <h2>Welcome ${name}</h2>
+            <p>Your Employee ID is:</p>
+            <h3 style="color:#2E86C1">${employee_id}</h3>
+            <p>Please keep it safe.</p>
+          </div>
+        `
+      );
+    } catch (emailError) {
+      email_sent = false;
+      console.error("Registration email error:", emailError.message);
+    }
 
     return res.status(201).json({
       success: true,
       message: "Registered successfully",
       employee_id,
-      email_sent: true,
+      email_sent,
     });
 
   } catch (error) {
-    console.error("Register error:", error.message);
+    console.error("Register error:", error.code || error.message);
     return res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Unable to register employee",
     });
   }
 };
