@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -81,7 +82,19 @@ export default function RegisterScreen() {
       console.log("📩 BACKEND RESPONSE:", result);
 
       if (result?.success) {
-        router.replace('/login');
+        if (result.email_sent === false) {
+          Alert.alert(
+            'Account created',
+            `Your employee ID is ${result.employee_id}. We could not send the email, so save this ID before continuing.`,
+            [{ text: 'Continue', onPress: () => router.replace('/login') }]
+          );
+        } else {
+          Alert.alert(
+            'Registration successful',
+            'Your employee ID was sent to your email.',
+            [{ text: 'Continue', onPress: () => router.replace('/login') }]
+          );
+        }
       } else {
         setError(result?.message || "Registration failed");
       }
