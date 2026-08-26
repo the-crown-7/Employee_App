@@ -17,11 +17,9 @@ export const fetchProfileAPI = async () => {
 
     const data = await res.json();
 
-    console.log("PROFILE API RESPONSE:", data);
 
     return data;
   } catch (error) {
-    console.log('PROFILE ERROR:', error);
     return { success: false };
   }
 };

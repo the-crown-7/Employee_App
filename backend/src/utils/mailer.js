@@ -16,29 +16,25 @@ const transporter = nodemailer.createTransport({
 // safer verification
 transporter.verify((error, success) => {
   if (error) {
-    console.log("❌ SMTP ERROR:", error.message);
+    console.error(" SMTP ERROR:", error);
   } else {
-    console.log("✅ SMTP READY");
+    console.log(" SMTP READY");
   }
 });
 
 export const sendEmail = async (to, subject, html) => {
   try {
-    console.log("📨 SENDING EMAIL TO:", to);
-    console.log("📧 FROM EMAIL:", process.env.EMAIL_USER);
 
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,   // ✅ IMPORTANT FIX (no alias wrapping)
+      from: process.env.EMAIL_USER,  
       to,
       subject,
       html,
     });
 
-    console.log("📩 EMAIL SENT:", info.messageId || info.response);
     return info;
 
   } catch (error) {
-    console.error("❌ EMAIL FAILED:", error);
     throw error;
   }
 };
