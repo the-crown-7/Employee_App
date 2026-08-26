@@ -54,6 +54,7 @@ export const registerEmployee = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Register error:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server error",
